@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, DeleteView
-from .filters import AdvertFilter
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
+from .filters import AdvertFilter
+from .forms import AdvertForm
 from .models import Advert
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
@@ -15,26 +17,24 @@ class AdvertList(ListView):
 
 
     # Переопределяем функцию получения списка товаров
+    def get_queryset(self):
+        # Получаем обычный запрос
+        queryset = super().get_queryset()
+        # Используем наш класс фильтрации.
+        # self.request.GET содержит объект QueryDict, который мы рассматривали
+        # в этом юните ранее.
+        # Сохраняем нашу фильтрацию в объекте класса,
+        # чтобы потом добавить в контекст и использовать в шаблоне.
+        self.filterset = AdvertFilter(self.request.GET, queryset)
+        # Возвращаем из функции отфильтрованный список товаров
+        return self.filterset.qs
 
 
-def get_queryset(self):
-    # Получаем обычный запрос
-    queryset = super().get_queryset()
-    # Используем наш класс фильтрации.
-    # self.request.GET содержит объект QueryDict, который мы рассматривали
-    # в этом юните ранее.
-    # Сохраняем нашу фильтрацию в объекте класса,
-    # чтобы потом добавить в контекст и использовать в шаблоне.
-    self.filterset = AdvertFilter(self.request.GET, queryset)
-    # Возвращаем из функции отфильтрованный список товаров
-    return self.filterset.qs
-
-
-def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    # Добавляем в контекст объект фильтрации.
-    context['filterset'] = self.filterset
-    return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Добавляем в контекст объект фильтрации.
+        context['filterset'] = self.filterset
+        return context
 
 class AdvertDetail(DetailView):
     """Подробно об объявлении"""
@@ -43,8 +43,26 @@ class AdvertDetail(DetailView):
     template_name = 'board/advert-detail.html'
 
 
-class AdvertDelete(PermissionRequiredMixin, DeleteView):
+# Добавляем новое представление для создания товаров.
+class AdvertCreate(CreateView):
+    # Указываем нашу разработанную форму
+    form_class = AdvertForm
+    # модель товаров
+    model = Advert
+    # и новый шаблон, в котором используется форма.
+    template_name = 'board/advert_edit.html'
+
+
+class AdvertUpdate(UpdateView):
+    form_class = AdvertForm
+    model = Advert
+    template_name = 'board/advert_edit.html'
+
+
+
+class AdvertDelete(DeleteView): #PermissionRequiredMixin,
     #permission_required = ('board.delete_advert', )
     model = Advert
-    template_name = 'delete.html'
-    success_url = 'http://127.0.0.1:8000'
+    template_name = 'board/advert_delete.html'
+    success_url = reverse_lazy('advert-list')
+    #success_url = 'http://127.0.0.1:8000'

@@ -74,13 +74,12 @@ class Advert(models.Model):
     slug = models.SlugField('url', max_length=200, unique=True)
     rating = models.SmallIntegerField("Лайки", default=0)
 
-
-
     def __str__(self):
         return self.subject
 
-    def get_absolute_url(self):
-        return reverse("advert-detail", kwargs={"category": self.category.slug, "slug": self.slug})
+    # def get_absolute_url(self):
+    #     return reverse("advert-detail", kwargs={"category": self.category.slug, "slug": self.slug})
+
 
     """Добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с объявлениями"""
     #def get_absolute_url(self):
@@ -90,8 +89,8 @@ class Advert(models.Model):
       #  super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
        # cache.delete(f'advert-{self.id}')  # затем удаляем его из кэша, чтобы сбросить его
 
-   # def get_absolute_url(self):
-        #return reverse('advert_create', args=[str(self.id)])
+    def get_absolute_url(self):
+       return reverse('advert-detail', kwargs={'pk': self.pk})
 
     def like(self):
         self.rating += 1

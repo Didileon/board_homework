@@ -14,7 +14,7 @@ class AdvertFilter(FilterSet):
        # будет производиться фильтрация.
        fields = {
            # поиск по названию
-           'subject': ['exact'],
+           'subject': ['icontains'],
            'category': ['exact'],
            'price': [
                'lt',  # цена должна быть меньше или равна указанной
