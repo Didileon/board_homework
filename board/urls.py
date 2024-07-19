@@ -12,7 +12,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('profile/', include("profiles.urls")),
-    # path('http://127.0.0.1:8000/<slug:category>/<slug:slug>/delete/', AdvertDelete.as_view(), name='advert_delete'),
     path('', include("config.urls")),
 
 ]

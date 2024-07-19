@@ -26,8 +26,8 @@ Advert
 <br>
     <br>
 
-<a href= "http://127.0.0.1:8000/<int:pk>/update/"><button>Редактировать</button></a>
-<a href= "http://127.0.0.1:8000/<int:pk>/delete/"><button>Удалить</button></a>
+<a href= "{% url 'advert_update' advert.id %}"><button>Редактировать</button></a>
+<a href= "{% url 'advert_delete' advert.id %}"><button>Удалить</button></a>
 
 
 
